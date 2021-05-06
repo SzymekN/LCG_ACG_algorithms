@@ -32,34 +32,34 @@ int SetIncrement(int m)
 
 std::vector<int> FindPrimeFactors(int a)
 {
-    std::vector<int> v;
+	std::vector<int> v;
 
 	//divide until finding all prime factors
-    for (int i = 2; i <= a/2; i++)
-    {
+	for (int i = 2; i <= a / 2; i++)
+	{
 		if (i > 2 and i % 2 == 0)
 			i++;
-        while (a % i == 0)
-        {
-            v.push_back(i);
-            a = a / i;
-        }
-    }
+		while (a % i == 0)
+		{
+			v.push_back(i);
+			a = a / i;
+		}
+	}
 
 	//if a!=0 a must be a prime number
-    if (a > 1)
-        v.push_back(a);
+	if (a > 1)
+		v.push_back(a);
 
-    return v;
+	return v;
 }
 
 int SetMultiplier(int m)
 {
 	int greatestLambda{};
-	int bestA = -1;
+	int bestA = 1;
 	std::vector<int> aFactor;
 	std::vector<int> mPrimeFactors;
-	
+
 	for (int i = 2; i < m; i++) {
 		if (GCD(i, m) == 1) {
 			int lambda = 1;
@@ -88,7 +88,7 @@ int SetMultiplier(int m)
 	mPrimeFactors = FindPrimeFactors(m);
 	for (int a : aFactor) {
 		//check if a is divisable by all prime factors of m
-		if (CheckDivisibility(a, mPrimeFactors)){
+		if (CheckDivisibility(a, mPrimeFactors)) {
 			//if m is divisable by 4 than a-1 also must be
 			if (m % 4 == 0) {
 				if ((a - 1) % 4 == 0) {
@@ -96,12 +96,12 @@ int SetMultiplier(int m)
 				}
 			}
 			else
-			bestA = a;
+				bestA = a;
 		}
 	}
 
 	//if no a passes above conditions best 'a' is the greates 'a'
-	if (bestA == -1)
+	if (bestA == 1 and aFactor.size() > 0)
 		bestA = aFactor.back();
 	return bestA;
 }
@@ -133,17 +133,24 @@ int* LCG(int n, int m, int x0)
 	if (x0 == 0) {
 		x0 = time(0) % m;
 	}
-	
+
+
+	//check if conditions are met
+	if (m < 0  or (x0 < 0 or x0 >= m))
+		throw EXCEPTION_CODE::valueOutOfBoundaries;
+
 	//set generator parameters
 	int c = SetIncrement(m);
 	int a = SetMultiplier(m);
 
-	//set if conditions are met
-	if (m < 0 or (a < 0 or a >= m) or (c < 0 or c >= m) or (x0 < 0 or x0 >= m))
+	//check if conditions are met
+	if ((a < 0 or a >= m) or (c < 0 or c >= m))
 		throw EXCEPTION_CODE::valueOutOfBoundaries;
 
 	int* arr;
 	arr = CreateArray<int>(n);
+
+	CheckPointer(arr);
 
 	//generate random numbers
 	for (int i = 0; i < n; i++) {
@@ -156,7 +163,7 @@ int* LCG(int n, int m, int x0)
 void SetBestPair(int& j, int& k, int n, std::ifstream& readFromFile)
 {
 	int tempJ{}, tempK{};
-	while (readFromFile.peek()!=EOF) {
+	while (readFromFile.peek() != EOF) {
 		readFromFile >> tempJ;
 		readFromFile >> tempK;
 		//read until k is lesser than n
@@ -184,14 +191,15 @@ int* ACG(int n)
 	std::cout << "modulus: ";
 	std::cin >> m;
 
-	//m can't be < 0
-	if(m<0)
+	//m can't be <= 0
+	if (m <= 0)
 		throw EXCEPTION_CODE::valueOutOfBoundaries;
 
 	//fill array with random numbers using LCG algorithm
-	int* randomNumbers = LCG(n,m);
+	int* randomNumbers = nullptr;
+	randomNumbers = LCG(n, m);
+	CheckPointer(randomNumbers);
 	FlipArray(randomNumbers, n);
-
 
 	//Generate using ACG algorithm
 	k--;
@@ -201,9 +209,9 @@ int* ACG(int n)
 		k--;
 		j--;
 		if (k == -1)
-			k = n-1;
+			k = n - 1;
 		else if (j == -1)
-			j = n-1;
+			j = n - 1;
 	}
 
 	return randomNumbers;
