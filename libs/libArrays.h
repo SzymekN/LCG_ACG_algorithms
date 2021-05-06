@@ -1,5 +1,5 @@
-#ifndef LIBTABLES_H
-#define LIBTABLES_H
+#ifndef LIBARRAYS_H
+#define LIBARRAYS_H
 #include <iomanip>
 #include <iostream>
 #include "libErrors.h"
@@ -70,4 +70,4 @@ template <class T> void FlipArray(T* arr, int size) {
 	}
 }
 
-#endif // !LIBTABLES_H
+#endif // !LIBARRAYS_H
