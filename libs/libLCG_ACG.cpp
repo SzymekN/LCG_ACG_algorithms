@@ -63,7 +63,7 @@ int SetMultiplier(int m)
 	for (int i = 2; i < m; i++) {
 		if (GCD(i, m) == 1) {
 			int lambda = 1;
-			unsigned long long power = (pow(i, lambda));
+			long long power = (pow(i, lambda));
 			//calculate until value didn't overflow unsigned long long size
 			while (power > 0) {
 				if (power % m == 1) {
